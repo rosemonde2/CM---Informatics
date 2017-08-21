@@ -1,3 +1,9 @@
+-- Query Informatics Metrics CTSA EDW
+-- Data Model: OMOP 5.X
+-- Database MS SQL
+-- Updated 8/18/2017
+
+-- With Statement used to calculate Unique Patients, used as the denominator for subsequent measures
 with DEN ([Unique Total Patients]) as
 (
 		SELECT CAST(Count(Distinct OP.Person_ID)as Float) as 'Unique Total Patients' 
@@ -10,7 +16,7 @@ with DEN ([Unique Total Patients]) as
 	FROM DEN	
 
 Union
--- Domain Gender
+-- Domain Gender: % of unique patient with gender populated
 	Select NUM.*, DEN.*, (100.0 * (NUM.[Patients with Standards]/ DEN.[Unique Total Patients])) as '% Standards','Not Applicable' as 'Values Present'	
 	From 
 		(
@@ -21,22 +27,22 @@ Union
 		) Num, DEN
 
 Union
--- Domain Age/DOB
+-- Domain Age/DOBL: % of unique patient with DOB populated
 	Select NUM.*, DEN.*, (100.0 * (NUM.[Patients with Standards]/ Den.[Unique Total Patients])) as '% Standards','Not Applicable' as 'Values Present'	
 	From 
 		(
 		SELECT 'Demo Age/DOB' AS Domain, 
 		CAST(COUNT(DISTINCT D.person_id) as Float) AS 'Patients with Standards'
 		FROM Person D
-		-- We may want to alter this to be only Year of birth present at this time Year, Month and day are required in order to counts
+		-- We may want to alter this to be only Year of birth present at this time Year, Month and Day are required in order to count
 		Where D.birth_datetime  is NOT NULL 
 			--Where D.Year_of_Birth  is NOT NULL 
-			--nd  D.month_of_Birth is NOT NULL 
+			--and  D.month_of_Birth is NOT NULL 
 			--and  D.Day_of_Birth  is NOT NULL
 		) Num, DEN
 
 Union
--- Domain Labs
+-- Domain Labs: % of unique patient with LOINC as lab valued
 	Select NUM.*, DEN.*, (100.0 * (NUM.[Patients with Standards]/ Den.[Unique Total Patients])) as '% Standards' , 'Not Applicable' as 'Values Present'	
 	From 
 		(
@@ -47,7 +53,7 @@ Union
 		) Num, DEN
 
 Union
--- Domain Drug
+-- Domain Drug: % of unique patient with RxNorm as Medication valued
 	Select NUM.*, DEN.*, (100.0 * (NUM.[Patients with Standards]/ Den.[Unique Total Patients])) as '% Standards','Not Applicable' as 'Values Present'	
 	From 
 		(
@@ -57,7 +63,7 @@ Union
 		JOIN Concept C ON D.drug_concept_id = C.concept_id AND C.vocabulary_id = 'RxNorm' 
 		) Num, DEN
 Union
--- Domain Condition
+-- Domain Condition: % of unique patient with standard value set for condition
 	Select NUM.*, DEN.*, (100.0 * (NUM.[Patients with Standards]/ Den.[Unique Total Patients])) as '% Standards', 'Not Applicable' as 'Values Present'	
 	From 
 		(
@@ -70,7 +76,7 @@ Union
 		) Num, DEN
 
 Union
--- Domain Procedure
+-- Domain Procedure: % of unique patient with standard value set for procedure
 	Select NUM.*, DEN.*, (100.0 * (NUM.[Patients with Standards]/ Den.[Unique Total Patients])) as '% Standards', 'Not Applicable' as 'Values Present'		
 	From 
 		(
@@ -83,15 +89,14 @@ Union
 		) Num, DEN
 
 Union
--- Domain Observatins are a yes or no on whether they exist or not
+-- Domain Observations:  Checks for the presents of recorded observations
 	Select 'Observations Present' AS 'Domain',  '' as 'Patients with Standards', '' as 'Unique Total Patients', '' as  '% Standards', 
 		Case 
 			When Count(*) = 0 then 'No Observation' else 'Observations Present' end as 'Values Present'		
 	from observation
 
 Union
--- Domain Note Text
--- This needs to be checked by George H
+-- Domain Note Text: % of unique patient with note text populated
 	Select NUM.*, DEN.*, (100.0 * (NUM.[Patients with Standards]/ Den.[Unique Total Patients])) as '% Standards','Not Applicable' as 'Values Present'	
 	From 
 		(
@@ -101,9 +106,10 @@ Union
 		) Num, DEN
 
 ----Union
----- Domain NLP present does not measure % of unique patients
+---- Future Measures 
+-- Domain NLP present does not measure % of unique patients
 --	--Select 'Note NLP Present' AS 'Domain',  '' as 'Patients with Standards', '' as 'Unique Total Patients', '' as  '% Standards', 
---	--	Case 
+--	--Case 
 --	--		When Count(*) = 0 then 'No Observation' else 'Observations Present' end as 'Values Present'		
 --	--from Note_NLP
 
