@@ -16,7 +16,7 @@ Count of unique patients within the clinical data repository (denominator)
 
 % of unique patients with the standard value (% = [numerator]/[denominator])
 
-See detailed description of numerator and denominator statements at: https://docs.google.com/spreadsheets/d/1hUdtjJy5phqniivJCRXfJl_WGVFp-LMczBhYWLphyWE/edit#gid=1462405043.
+See detailed description of numerator and denominator statements at: https://docs.google.com/spreadsheets/d/1z_WGSaD5rxt68wbdcEAVE9CtiXAn2IN5SLFcH2RI370/edit#gid=0
 
 The draft operational guidelines can be found here: https://docs.google.com/document/d/1QrB6w6lJJ_a16bnxYsdU1jzGrMkE6B3o4BGj1ERAUUk/edit 
 
